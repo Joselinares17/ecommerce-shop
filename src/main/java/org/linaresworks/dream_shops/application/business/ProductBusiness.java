@@ -1,24 +1,47 @@
 package org.linaresworks.dream_shops.application.business;
 
 import org.linaresworks.dream_shops.application.service.IProductService;
+import org.linaresworks.dream_shops.domain.entity.Category;
 import org.linaresworks.dream_shops.domain.entity.Product;
+import org.linaresworks.dream_shops.domain.repository.CategoryRepository;
 import org.linaresworks.dream_shops.domain.repository.ProductRepository;
 import org.linaresworks.dream_shops.infrastructure.exception.ProductNotFoundException;
+import org.linaresworks.dream_shops.infrastructure.model.request.AddProductRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductBusiness implements IProductService {
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductBusiness(ProductRepository productRepository) {
+    public ProductBusiness(ProductRepository productRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
-    public Product addProduct(Product product) {
-        return null;
+    public Product addProduct(AddProductRequest request) {
+        Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
+                .orElseGet(() -> {
+                    Category newCategory = new Category(request.getCategory().getName());
+                    return categoryRepository.save(newCategory);
+                });
+        request.setCategory(category);
+        return productRepository.save(createProduct(request, category));
+    }
+
+    private Product createProduct(AddProductRequest request, Category category) {
+        return new Product(
+                request.getName(),
+                request.getBrand(),
+                request.getPrice(),
+                request.getInventory(),
+                request.getDescription(),
+                category
+        );
     }
 
     @Override
@@ -35,6 +58,11 @@ public class ProductBusiness implements IProductService {
                     throw new ProductNotFoundException();
                     }
                 );
+    }
+
+    @Override
+    public void updateProduct(Long id, Product product) {
+
     }
 
     @Override
