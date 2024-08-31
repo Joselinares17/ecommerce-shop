@@ -7,6 +7,7 @@ import org.linaresworks.dream_shops.domain.repository.CategoryRepository;
 import org.linaresworks.dream_shops.domain.repository.ProductRepository;
 import org.linaresworks.dream_shops.infrastructure.exception.ProductNotFoundException;
 import org.linaresworks.dream_shops.infrastructure.model.request.AddProductRequest;
+import org.linaresworks.dream_shops.infrastructure.model.request.ProductUpdateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -61,8 +62,23 @@ public class ProductBusiness implements IProductService {
     }
 
     @Override
-    public void updateProduct(Long id, Product product) {
+    public Product updateProduct(Long id, ProductUpdateRequest request) {
+        return productRepository.findById(id)
+                .map(existingProduct -> updateExistingProduct(existingProduct, request))
+                .map(productRepository::save)
+                .orElseThrow(ProductNotFoundException::new);
+    }
 
+    private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request) {
+        existingProduct.setName(request.getName());
+        existingProduct.setBrand(request.getBrand());
+        existingProduct.setPrice(request.getPrice());
+        existingProduct.setInventory(request.getInventory());
+        existingProduct.setDescription(request.getDescription());
+
+        Category category = categoryRepository.findByName(request.getCategory().getName());
+        existingProduct.setCategory(category);
+        return existingProduct;
     }
 
     @Override
