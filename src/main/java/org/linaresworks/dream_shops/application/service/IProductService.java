@@ -9,7 +9,7 @@ import java.util.List;
 public interface IProductService {
     Product addProduct(AddProductRequest request);
     Product getProductById(Long id);
-    void deleteProductById(Long id, Product product);
+    void deleteProductById(Long id);
     Product updateProduct(Long id, ProductUpdateRequest request);
     List<Product> getAllProducts();
     List<Product> getProductsByCategory(String category);

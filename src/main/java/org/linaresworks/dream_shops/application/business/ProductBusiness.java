@@ -52,7 +52,7 @@ public class ProductBusiness implements IProductService {
     }
 
     @Override
-    public void deleteProductById(Long id, Product product) {
+    public void deleteProductById(Long id) {
         productRepository.findById(id)
                 .ifPresentOrElse(productRepository::delete,
                         () -> {
