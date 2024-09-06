@@ -9,6 +9,7 @@ import org.linaresworks.dream_shops.infrastructure.exception.ProductNotFoundExce
 import org.linaresworks.dream_shops.infrastructure.model.request.AddProductRequest;
 import org.linaresworks.dream_shops.infrastructure.model.request.ProductUpdateRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +25,7 @@ public class ProductBusiness implements IProductService {
     }
 
     @Override
+    @Transactional
     public Product addProduct(AddProductRequest request) {
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(() -> {
@@ -46,12 +48,14 @@ public class ProductBusiness implements IProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Product getProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(ProductNotFoundException::new);
     }
 
     @Override
+    @Transactional
     public void deleteProductById(Long id) {
         productRepository.findById(id)
                 .ifPresentOrElse(productRepository::delete,
@@ -62,6 +66,7 @@ public class ProductBusiness implements IProductService {
     }
 
     @Override
+    @Transactional
     public Product updateProduct(Long id, ProductUpdateRequest request) {
         return productRepository.findById(id)
                 .map(existingProduct -> updateExistingProduct(existingProduct, request))
@@ -82,36 +87,43 @@ public class ProductBusiness implements IProductService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Product> getProductsByCategory(String category) {
         return productRepository.findByCategoryName(category);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Product> getProductsByBrand(String brand) {
         return productRepository.findByBrand(brand);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Product> getProductsByCategoryAndBrand(String category, String brand) {
         return productRepository.findByCategoryNameAndBrand(category, brand);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Product> getProductsByName(String name) {
         return productRepository.findByName(name);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Product> getProductsByBrandAndName(String brand, String name) {
         return productRepository.findByBrandAndName(brand, name);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand, name);
     }

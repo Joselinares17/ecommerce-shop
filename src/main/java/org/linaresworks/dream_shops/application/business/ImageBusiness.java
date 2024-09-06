@@ -8,6 +8,7 @@ import org.linaresworks.dream_shops.domain.repository.ImageRepository;
 import org.linaresworks.dream_shops.infrastructure.exception.ResourceNotFoundException;
 import org.linaresworks.dream_shops.infrastructure.model.dto.ImageDto;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.sql.rowset.serial.SerialBlob;
@@ -27,12 +28,14 @@ public class ImageBusiness implements IImageService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Image getImageById(Long id) {
         return imageRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("no image found with id: " + id));
     }
 
     @Override
+    @Transactional
     public void deleteImageById(Long id) {
         imageRepository.findById(id)
                 .ifPresentOrElse(imageRepository::delete, () -> {
@@ -42,6 +45,7 @@ public class ImageBusiness implements IImageService {
 
     // TODO: Cambiar esta lógica.
     @Override
+    @Transactional
     public List<ImageDto> savesImage(List<MultipartFile> files, Long productId) {
         Product product = productService.getProductById(productId);
         List<ImageDto> savedImageDto = new ArrayList<>();
@@ -76,6 +80,7 @@ public class ImageBusiness implements IImageService {
     }
 
     @Override
+    @Transactional
     public void updateImage(MultipartFile file, Long imageId) {
         Image image = getImageById(imageId);
 
