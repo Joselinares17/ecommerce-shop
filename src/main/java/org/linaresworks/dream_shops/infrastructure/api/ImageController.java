@@ -3,7 +3,7 @@ package org.linaresworks.dream_shops.infrastructure.api;
 import org.linaresworks.dream_shops.application.service.IImageService;
 import org.linaresworks.dream_shops.domain.entity.Image;
 import org.linaresworks.dream_shops.infrastructure.exception.ResourceNotFoundException;
-import org.linaresworks.dream_shops.infrastructure.model.dto.ImageDto;
+import org.linaresworks.dream_shops.infrastructure.model.response.ImageResponse;
 import org.linaresworks.dream_shops.infrastructure.model.response.ApiResponse;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -31,8 +31,8 @@ public class ImageController {
     @PostMapping("/upload")
     public ResponseEntity<ApiResponse> saveImages(@RequestParam Long productId, @RequestParam List<MultipartFile> files) {
         try {
-            List<ImageDto> imageDtos = imageService.savesImage(files, productId);
-            return ResponseEntity.ok(new ApiResponse("upload success", imageDtos));
+            List<ImageResponse> imageResponses = imageService.savesImage(files, productId);
+            return ResponseEntity.ok(new ApiResponse("upload success", imageResponses));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(new ApiResponse("upload failed", e.getMessage()));
         }

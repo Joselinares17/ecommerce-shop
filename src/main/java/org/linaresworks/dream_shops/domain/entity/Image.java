@@ -1,10 +1,7 @@
 package org.linaresworks.dream_shops.domain.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Blob;
 
@@ -26,4 +23,8 @@ public class Image {
 
     @ManyToOne(targetEntity = Product.class)
     private Product product;
+
+    //TODO: revisar constructor
+    public Image(Long imageId, String imageName, String downloadUrl) {
+    }
 }
