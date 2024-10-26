@@ -5,6 +5,10 @@ import org.linaresworks.dream_shops.domain.entity.Category;
 import org.linaresworks.dream_shops.domain.repository.CategoryRepository;
 import org.linaresworks.dream_shops.infrastructure.exception.AlreadyExistsException;
 import org.linaresworks.dream_shops.infrastructure.exception.ResourceNotFoundException;
+import org.linaresworks.dream_shops.infrastructure.model.mapper.CategoryMapper;
+import org.linaresworks.dream_shops.infrastructure.model.request.AddCategoryRequest;
+import org.linaresworks.dream_shops.infrastructure.model.request.CategoryUpdateRequest;
+import org.linaresworks.dream_shops.infrastructure.model.response.CategoryResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,47 +18,60 @@ import java.util.Optional;
 @Service
 public class CategoryBusiness implements ICategoryService {
     private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
-    public CategoryBusiness(CategoryRepository categoryRepository) {
+    public CategoryBusiness(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
+        this.categoryMapper = categoryMapper;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Category getCategoryById(Long id) {
+    public CategoryResponse getCategoryById(Long id) {
         return categoryRepository.findById(id)
+                .map(categoryMapper)
                 .orElseThrow(() -> new ResourceNotFoundException("category not found"));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Category getCategoryByName(String name) {
-        return categoryRepository.findByName(name);
+    public CategoryResponse getCategoryByName(String name) {
+        return categoryRepository.findByName(name)
+                .map(categoryMapper)
+                .orElseThrow(() -> new ResourceNotFoundException("category not found"));
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryResponse> getAllCategories() {
+        return categoryRepository.findAll().stream()
+                .map(categoryMapper)
+                .toList();
     }
 
     @Override
     @Transactional
-    public Category addCategory(Category category) {
-        return Optional.of(category)
-                .filter(c -> !categoryRepository.existsByName(c.getName()))
-                .map(categoryRepository::save)
-                .orElseThrow(() -> new AlreadyExistsException(category.getName() + " already exists"));
+    public CategoryResponse addCategory(AddCategoryRequest request) {
+    return Optional.of(request)
+        .filter(c -> !categoryRepository.existsByName(c.getName()))
+        .map(
+            item -> {
+                Category newItem = categoryMapper.fromAddRequest(item);
+                categoryRepository.save(newItem);
+                return categoryMapper.apply(newItem);
+            })
+        .orElseThrow(() -> new AlreadyExistsException(request.getName() + " already exists"));
     }
 
     @Override
     @Transactional
-    public Category updateCategory(Long id, Category category) {
+    public CategoryResponse updateCategory(Long id, CategoryUpdateRequest request) {
         return Optional.ofNullable(getCategoryById(id))
                 .map(oldCategory -> {
-                    oldCategory.setName(category.getName());
-                    return categoryRepository.save(oldCategory);
+                    oldCategory.setName(request.getName());
+                    return categoryRepository.save(categoryMapper.fromResponse(oldCategory));
                 })
+                .map(categoryMapper)
                 .orElseThrow(() -> new ResourceNotFoundException("category not found"));
     }
 

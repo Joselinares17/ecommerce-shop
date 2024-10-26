@@ -1,14 +1,16 @@
 package org.linaresworks.dream_shops.application.service;
 
-import org.linaresworks.dream_shops.domain.entity.Category;
+import org.linaresworks.dream_shops.infrastructure.model.request.AddCategoryRequest;
+import org.linaresworks.dream_shops.infrastructure.model.request.CategoryUpdateRequest;
+import org.linaresworks.dream_shops.infrastructure.model.response.CategoryResponse;
 
 import java.util.List;
 
 public interface ICategoryService {
-    Category getCategoryById(Long id);
-    Category getCategoryByName(String name);
-    List<Category> getAllCategories();
-    Category addCategory(Category category);
-    Category updateCategory(Long id, Category category);
+    CategoryResponse getCategoryById(Long id);
+    CategoryResponse getCategoryByName(String name);
+    List<CategoryResponse> getAllCategories();
+    CategoryResponse addCategory(AddCategoryRequest request);
+    CategoryResponse updateCategory(Long id, CategoryUpdateRequest request);
     void deleteCategoryById(Long id);
 }
