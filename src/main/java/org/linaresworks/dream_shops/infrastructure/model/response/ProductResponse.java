@@ -16,6 +16,6 @@ public class ProductResponse {
     private BigDecimal price;
     private int inventory;
     private String description;
-    private Category category;
+    private CategoryResponse category;
     private List<ImageResponse> images;
 }

@@ -8,7 +8,10 @@ import org.linaresworks.dream_shops.domain.repository.CategoryRepository;
 import org.linaresworks.dream_shops.domain.repository.ImageRepository;
 import org.linaresworks.dream_shops.domain.repository.ProductRepository;
 import org.linaresworks.dream_shops.infrastructure.exception.ProductNotFoundException;
+import org.linaresworks.dream_shops.infrastructure.exception.ResourceNotFoundException;
+import org.linaresworks.dream_shops.infrastructure.model.mapper.CategoryMapper;
 import org.linaresworks.dream_shops.infrastructure.model.mapper.ProductMapper;
+import org.linaresworks.dream_shops.infrastructure.model.response.CategoryResponse;
 import org.linaresworks.dream_shops.infrastructure.model.response.ImageResponse;
 import org.linaresworks.dream_shops.infrastructure.model.response.ProductResponse;
 import org.linaresworks.dream_shops.infrastructure.model.request.AddProductRequest;
@@ -28,7 +31,7 @@ public class ProductBusiness implements IProductService {
     private final ModelMapper modelMapper;
     private final ProductMapper productMapper;
 
-    public ProductBusiness(ProductRepository productRepository, CategoryRepository categoryRepository, ImageRepository imageRepository, ModelMapper modelMapper, ProductMapper productMapper) {
+    public ProductBusiness(ProductRepository productRepository, CategoryRepository categoryRepository, ImageRepository imageRepository, ModelMapper modelMapper, ProductMapper productMapper, CategoryMapper categoryMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.imageRepository = imageRepository;
@@ -39,7 +42,7 @@ public class ProductBusiness implements IProductService {
     @Override
     @Transactional
     public ProductResponse addProduct(AddProductRequest request) {
-        Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
+        Category category = categoryRepository.findByName(request.getCategory().getName())
                 .orElseGet(() -> {
                     Category newCategory = new Category(request.getCategory().getName());
                     return categoryRepository.save(newCategory);
@@ -99,7 +102,8 @@ public class ProductBusiness implements IProductService {
         existingProduct.setInventory(request.getInventory());
         existingProduct.setDescription(request.getDescription());
 
-        Category category = categoryRepository.findByName(request.getCategory().getName());
+        Category category = categoryRepository.findByName(request.getCategory().getName())
+                .orElseThrow(ResourceNotFoundException::new);
         existingProduct.setCategory(category);
         return existingProduct;
     }
