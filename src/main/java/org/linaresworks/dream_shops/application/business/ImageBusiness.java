@@ -5,6 +5,7 @@ import org.linaresworks.dream_shops.application.service.IProductService;
 import org.linaresworks.dream_shops.domain.entity.Image;
 import org.linaresworks.dream_shops.domain.repository.ImageRepository;
 import org.linaresworks.dream_shops.infrastructure.exception.ResourceNotFoundException;
+import org.linaresworks.dream_shops.infrastructure.model.mapper.ImageMapper;
 import org.linaresworks.dream_shops.infrastructure.model.mapper.ProductMapper;
 import org.linaresworks.dream_shops.infrastructure.model.response.ImageResponse;
 import org.linaresworks.dream_shops.infrastructure.model.response.ProductResponse;
@@ -23,11 +24,13 @@ public class ImageBusiness implements IImageService {
     private final ImageRepository imageRepository;
     private final IProductService productService;
     private final ProductMapper productMapper;
+    private final ImageMapper imageMapper;
 
-    public ImageBusiness(ImageRepository imageRepository, IProductService productService, ProductMapper productMapper) {
+    public ImageBusiness(ImageRepository imageRepository, IProductService productService, ProductMapper productMapper, ImageMapper imageMapper) {
         this.imageRepository = imageRepository;
         this.productService = productService;
         this.productMapper = productMapper;
+        this.imageMapper = imageMapper;
     }
 
     @Override

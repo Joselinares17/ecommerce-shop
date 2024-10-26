@@ -10,6 +10,8 @@ import java.util.function.Function;
 public class ImageMapper implements Function<Image, ImageResponse>{
     @Override
     public ImageResponse apply(Image image) {
+        if(image == null) return null;
+
         return new ImageResponse(
                 image.getId(),
                 image.getFileName(),
@@ -18,6 +20,8 @@ public class ImageMapper implements Function<Image, ImageResponse>{
     }
 
     public Image fromResponse(ImageResponse response) {
+        if(response == null) return null;
+
         return new Image(
                 response.getImageId(),
                 response.getImageName(),
