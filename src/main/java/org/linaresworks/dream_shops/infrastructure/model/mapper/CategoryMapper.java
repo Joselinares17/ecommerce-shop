@@ -12,14 +12,25 @@ public class CategoryMapper implements Function<Category, CategoryResponse> {
 
     @Override
     public CategoryResponse apply(Category category) {
-        return new CategoryResponse(category.getName());
+        if(category == null) return null;
+
+        return new CategoryResponse(
+                category.getId(),
+                category.getName());
     }
 
     public Category fromResponse(CategoryResponse response) {
-        return new Category(response.getName());
+        if(response == null) return null;
+
+        return new Category(
+                response.getId(),
+                response.getName());
     }
 
     public Category fromAddRequest(AddCategoryRequest request) {
-        return new Category(request.getName());
+        if(request == null) return null;
+
+        return new Category(
+                request.getName());
     }
 }
