@@ -1,45 +1,40 @@
 package org.linaresworks.dream_shops.infrastructure.model.mapper;
 
-import org.linaresworks.dream_shops.domain.entity.Image;
+import org.linaresworks.dream_shops.application.business.assembler.ProductAssemblerService;
 import org.linaresworks.dream_shops.domain.entity.Product;
-import org.linaresworks.dream_shops.domain.repository.ImageRepository;
 import org.linaresworks.dream_shops.infrastructure.model.response.ProductResponse;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.function.Function;
 
 @Service
 public class ProductMapper implements Function<Product, ProductResponse> {
-    private final ImageMapper imageMapper;
-    private final ImageRepository imageRepository;
+    private final ProductAssemblerService productAssembler;
     private final CategoryMapper categoryMapper;
 
-    public ProductMapper(ImageMapper imageMapper, ImageRepository imageRepository, CategoryMapper categoryMapper) {
-        this.imageMapper = imageMapper;
-        this.imageRepository = imageRepository;
+    public ProductMapper(ProductAssemblerService productAssembler, CategoryMapper categoryMapper) {
+        this.productAssembler = productAssembler;
         this.categoryMapper = categoryMapper;
     }
 
     @Override
     public ProductResponse apply(Product product) {
-        List<Image> images = imageRepository.findByProductId(product.getId());
+        if(product == null) return null;
 
-        return new ProductResponse(
-                product.getId(),
-                product.getName(),
-                product.getBrand(),
-                product.getPrice(),
-                product.getInventory(),
-                product.getDescription(),
-                categoryMapper.apply(product.getCategory()),
-                images.stream()
-                        .map(imageMapper)
-                        .toList()
-        );
+    return new ProductResponse(
+            product.getId(),
+            product.getName(),
+            product.getBrand(),
+            product.getPrice(),
+            product.getInventory(),
+            product.getDescription(),
+            categoryMapper.apply(product.getCategory()),
+            productAssembler.getProductImages(product.getId()));
     }
 
     public Product fromResponse(ProductResponse response) {
+        if(response == null) return null;
+
         return new Product(
                 response.getId(),
                 response.getName(),
@@ -48,9 +43,7 @@ public class ProductMapper implements Function<Product, ProductResponse> {
                 response.getInventory(),
                 response.getDescription(),
                 categoryMapper.fromResponse(response.getCategory()),
-                response.getImages().stream()
-                        .map(imageMapper::fromResponse)
-                        .toList()
+                productAssembler.mapImages(response.getImages())
         );
     }
 }
