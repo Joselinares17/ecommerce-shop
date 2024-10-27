@@ -73,4 +73,19 @@ public class ProductMapper implements Function<Product, ProductResponse> {
                 productAssembler.mapFromImageDTO(productDTO.getImage())
         );
     }
+
+    public Product fromProductResponse(ProductResponse response) {
+        if(response == null) return null;
+
+        return new Product(
+                response.getId(),
+                response.getName(),
+                response.getBrand(),
+                response.getPrice(),
+                response.getInventory(),
+                response.getDescription(),
+                categoryMapper.fromResponse(response.getCategory()),
+                productAssembler.mapFromImageResponse(response.getImages())
+        );
+    }
 }

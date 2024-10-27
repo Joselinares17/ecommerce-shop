@@ -2,7 +2,6 @@ package org.linaresworks.dream_shops.application.business;
 
 import org.linaresworks.dream_shops.application.service.IProductService;
 import org.linaresworks.dream_shops.domain.entity.Category;
-import org.linaresworks.dream_shops.domain.entity.Image;
 import org.linaresworks.dream_shops.domain.entity.Product;
 import org.linaresworks.dream_shops.domain.repository.CategoryRepository;
 import org.linaresworks.dream_shops.domain.repository.ImageRepository;
@@ -11,7 +10,6 @@ import org.linaresworks.dream_shops.infrastructure.exception.ProductNotFoundExce
 import org.linaresworks.dream_shops.infrastructure.exception.ResourceNotFoundException;
 import org.linaresworks.dream_shops.infrastructure.model.mapper.CategoryMapper;
 import org.linaresworks.dream_shops.infrastructure.model.mapper.ProductMapper;
-import org.linaresworks.dream_shops.infrastructure.model.response.ImageResponse;
 import org.linaresworks.dream_shops.infrastructure.model.response.ProductResponse;
 import org.linaresworks.dream_shops.infrastructure.model.request.AddProductRequest;
 import org.linaresworks.dream_shops.infrastructure.model.request.ProductUpdateRequest;
@@ -24,13 +22,11 @@ import java.util.List;
 public class ProductBusiness implements IProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final ImageRepository imageRepository;
     private final ProductMapper productMapper;
 
-    public ProductBusiness(ProductRepository productRepository, CategoryRepository categoryRepository, ImageRepository imageRepository, ProductMapper productMapper, CategoryMapper categoryMapper) {
+    public ProductBusiness(ProductRepository productRepository, CategoryRepository categoryRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
-        this.imageRepository = imageRepository;
         this.productMapper = productMapper;
     }
 
@@ -155,16 +151,5 @@ public class ProductBusiness implements IProductService {
     @Transactional(readOnly = true)
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand, name);
-    }
-
-    //TODO: Eliminar
-    private ProductResponse mapping(Product product) {
-        ProductResponse productResponse = modelMapper.map(product, ProductResponse.class);
-        List<Image> images = imageRepository.findByProductId(product.getId());
-        List<ImageResponse> imageResponses = images.stream()
-                .map(image -> modelMapper.map(image, ImageResponse.class))
-                .toList();
-        productResponse.setImages(imageResponses);
-        return productResponse;
     }
 }
