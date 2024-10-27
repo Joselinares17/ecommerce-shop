@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.linaresworks.dream_shops.infrastructure.model.dto.ImageDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -48,5 +49,13 @@ public class Product {
         this.inventory = inventory;
         this.description = description;
         this.category = category;
+    }
+
+    public Product(Long id, String name, String brand, BigDecimal price, List<Image> images) {
+        this.id = id;
+        this.name = name;
+        this.brand = brand;
+        this.price = price;
+        this.images = images;
     }
 }

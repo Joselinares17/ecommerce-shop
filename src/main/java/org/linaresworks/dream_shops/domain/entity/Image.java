@@ -29,7 +29,17 @@ public class Image {
     @ManyToOne(targetEntity = Product.class)
     private Product product;
 
-    //TODO: revisar constructor
-    public Image(Long imageId, String imageName, String downloadUrl) {
+    public Image(Long id, String fileName, String downloadUrl) {
+        this.id = id;
+        this.fileName = fileName;
+        this.downloadUrl = downloadUrl;
+    }
+
+    public Image(Long id, String fileName, String fileType, Blob image, String downloadUrl) {
+        this.id = id;
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.image = image;
+        this.downloadUrl = downloadUrl;
     }
 }
