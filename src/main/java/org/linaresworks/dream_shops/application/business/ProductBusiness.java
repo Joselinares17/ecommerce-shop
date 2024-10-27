@@ -11,31 +11,26 @@ import org.linaresworks.dream_shops.infrastructure.exception.ProductNotFoundExce
 import org.linaresworks.dream_shops.infrastructure.exception.ResourceNotFoundException;
 import org.linaresworks.dream_shops.infrastructure.model.mapper.CategoryMapper;
 import org.linaresworks.dream_shops.infrastructure.model.mapper.ProductMapper;
-import org.linaresworks.dream_shops.infrastructure.model.response.CategoryResponse;
 import org.linaresworks.dream_shops.infrastructure.model.response.ImageResponse;
 import org.linaresworks.dream_shops.infrastructure.model.response.ProductResponse;
 import org.linaresworks.dream_shops.infrastructure.model.request.AddProductRequest;
 import org.linaresworks.dream_shops.infrastructure.model.request.ProductUpdateRequest;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductBusiness implements IProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ImageRepository imageRepository;
-    private final ModelMapper modelMapper;
     private final ProductMapper productMapper;
 
-    public ProductBusiness(ProductRepository productRepository, CategoryRepository categoryRepository, ImageRepository imageRepository, ModelMapper modelMapper, ProductMapper productMapper, CategoryMapper categoryMapper) {
+    public ProductBusiness(ProductRepository productRepository, CategoryRepository categoryRepository, ImageRepository imageRepository, ProductMapper productMapper, CategoryMapper categoryMapper) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.imageRepository = imageRepository;
-        this.modelMapper = modelMapper;
         this.productMapper = productMapper;
     }
 
